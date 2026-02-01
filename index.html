@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Lyly</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        /* --- General Styling --- */
+        body {
+            margin: 0;
+            padding: 0;
+            
+            /* --- BACKGROUND IMAGE SETTINGS --- */
+            /* Old color commented out: background-color: #ffc0cb; */
+            
+            /* Make sure you have a file named 'background.jpg' in your assets folder! */
+            background-image: url('assets/wallpaperpink.png'); 
+            background-size: cover;       /* Ensures image fills screen */
+            background-position: center;  /* Centers the image */
+            background-repeat: no-repeat; /* No tiling */
+            
+            font-family: 'Press Start 2P', cursive; /* Pixelated Font */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #5a2d3c;
+            position: relative;
+        }
+
+        /* Overlay to make text readable over the background image */
+        #bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.4); /* 0.4 = 40% white tint. Increase to make it whiter. */
+            z-index: -5; /* sits behind everything but above the background image */
+        }
+
+        /* Sparkles Background Animation */
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #ffffff;
+            opacity: 0;
+            animation: twinkle 3s infinite ease-in-out;
+            image-rendering: pixelated;
+            transform: translateZ(0);
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: 1; transform: scale(1.2); }
+            100% { opacity: 0; transform: scale(0.5); }
+        }
+
+        /* Hearts Background */
+        .bg-heart {
+            position: absolute;
+            width: 32px;
+            height: 32px; 
+            animation: floatUp 15s linear infinite;
+            z-index: -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        .bg-heart img {
+            width: 24px;
+            height: 24px;
+            image-rendering: pixelated;
+            display: block;
+            transform: translateZ(0);
+        }
+
+        /* Pixel sprite helpers */
+        .pixel { image-rendering: pixelated; width: 48px; height: auto; display: inline-block; vertical-align: middle; }
+        .pixel-small { image-rendering: pixelated; width: 20px; height: auto; display: inline-block; }
+        .pixel-big { image-rendering: pixelated; width: 164px; height: auto; display: inline-block; }
+        
+        /* New class for REALLY BIG images if you need it */
+        .pixel-huge { image-rendering: pixelated; width: 250px; height: auto; display: inline-block; }
+
+        .pixel-flower { image-rendering: pixelated; width: 80px; height: auto; display: inline-block; margin: 0 6px; }
+        .pixel-envelop { width: 340px; }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* --- Screens --- */
+        .screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            z-index: 10;
+        }
+
+        .active {
+            display: flex;
+        }
+
+        /* Button Styling */
+        button {
+            background-color: #fff;
+            border: 4px solid #5a2d3c;
+            color: #5a2d3c;
+            font-family: 'Press Start 2P', cursive;
+            padding: 15px 20px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            box-shadow: 4px 4px 0px #5a2d3c;
+            transition: transform 0.1s;
+        }
+
+        button:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #5a2d3c;
+        }
+
+        button:hover {
+            background-color: #ffe6eb;
+        }
+
+        /* --- Intro Screen --- */
+        .envelope-container {
+            font-size: 100px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* --- Letter Flip Container --- */
+        .flip-card {
+            background-color: transparent;
+            width: 90%;
+            max-width: 500px;
+            height: 600px; /* Fixed height for the letter */
+            perspective: 1000px;
+            display: none; /* Hidden initially */
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+        }
+
+        .flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            background-color: white;
+            border: 4px solid #5a2d3c;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flip-card-front {
+            overflow-y: auto; /* Allow scrolling if text is long */
+        }
+
+        .flip-card-back {
+            transform: rotateY(180deg);
+            background-color: #fff0f5;
+        }
+
+        .letter-text {
+            font-size: 12px; /* Smaller font for reading */
+            line-height: 1.8;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        /* --- Celebration Screen --- */
+        #celebration-img {
+            width: 500px;
+            height: auto;
+            border: 4px solid #5a2d3c;
+            margin: 20px 0;
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.2);
+        }
+
+        .flowers {
+            font-size: 60px;
+        }
+
+        /* --- Game Over Screen --- */
+        .disabled-btn {
+            text-decoration: line-through;
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="bg-overlay"></div>
+
+    <div id="sparkle-container"></div>
+
+    <div id="screen-intro" class="screen active">
+        <h1>Incoming Mail!</h1>
+        <div class="envelope-container">
+            <img src="assets/PixelHeart.png" alt="Envelope with heart" class="pixel pixel-envelop">
+        </div>
+        <p>You have received a letter!</p>
+        <div>
+            <button onclick="openMail()">Open Mail</button>
+            <button onclick="alert('You cannot deny this mail! Try again :)')">Deny</button>
+        </div>
+    </div>
+
+    <div id="flip-card" class="flip-card">
+        <div class="flip-card-inner" id="flip-inner">
+            <div class="flip-card-front">
+                <p class="letter-text">
+                    "Dear lyly,<br><br>
+                    I cannot believe this is going to be our third year together bobo. I feel like the luckiest guy to have you by my side and I am looking forward to our future together.<br><br>
+                    I know I'm not perfect and I have hurt you many times before but I'm always thankful for you despite all of that sticking to me and always giving me another chance to redeem myself and just to show you the love you deserve babe.<br><br>
+                    I love you so so much lyly and I just wanted to ask you something....."
+                </p>
+                <button onclick="flipCard()">Turn Over ➔</button>
+            </div>
+
+            <div class="flip-card-back">
+                <h2>Will you be my Valentine lyly?</h2>
+                <div style="margin: 20px;">
+                    <img src="assets/pixel-bow.gif" alt="heart" class="pixel pixel-big">
+                </div>
+                <div id="options-container">
+                    <button onclick="chooseOption(1)">Yes!!!</button>
+                    <button onclick="chooseOption(2)">Maybe... I'll think about it...</button>
+                    <button onclick="chooseOption(3)">EWWWW HELL NAH</button>
+                </div>
+                <div id="countdown-msg" style="display:none; color: red; margin-top: 10px;">Retry in <span id="timer">3</span>...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-success" class="screen">
+        <h1>YAYYYYY!!!</h1>
+        <div class="flowers">
+            <img src="assets/pixelflower2.png" alt="flower" class="pixel pixel-flower">
+            <img src="assets/pixeltulip.jpg" alt="flower" class="pixel pixel-flower">
+            <img src="assets/pixelflower3.png" alt="flower" class="pixel pixel-flower">
+            <img src="assets/pixelflower4.png" alt="flower" class="pixel pixel-flower">
+            <img src="assets/pixelflower5.png" alt="flower" class="pixel pixel-flower">
+        </div>
+        <img id="celebration-img" src="valentine2026.jpg" alt="Us">
+        <div class="flowers">
+            <img src="assets/pixelflower5.png" alt="flower" class="pixel pixel-flower">
+            <img src="assets/pixelflower4.png" alt="flower" class="pixel pixel-flower">
+            <img src="assets/pixeltulip.jpg" alt="flower" class="pixel pixel-flower">
+            <img src="assets/pixelflower2.png" alt="flower" class="pixel pixel-flower">
+            <img src="assets/pixelflower3.png" alt="flower" class="pixel pixel-flower">
+        </div>
+        <p style="margin-top: 20px; line-height: 1.5;">
+            I love you so much ly,<br>Thank you!!! &lt;3
+        </p>
+    </div>
+
+    <div id="screen-gameover" class="screen">
+        <h1 style="color:red; font-size: 40px;">GAME OVER</h1>
+        <p>Mission Failed.</p>
+        <div>
+            <button onclick="retryGame()">Retry?</button>
+            <button class="disabled-btn">Quit</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. Background Effects ---
+        function createSparkles() {
+            const container = document.body;
+            for (let i = 0; i < 50; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.classList.add('sparkle');
+                sparkle.style.left = Math.random() * 100 + 'vw';
+                sparkle.style.top = Math.random() * 100 + 'vh';
+                sparkle.style.animationDelay = Math.random() * 3 + 's';
+                container.appendChild(sparkle);
+            }
+        }
+
+        function createHearts() {
+            const container = document.body;
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('bg-heart');
+                const img = document.createElement('img');
+                img.src = 'assets/pixel-heart2.gif';
+                img.alt = 'heart';
+                img.classList.add('pixel-small');
+                heart.appendChild(img);
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                container.appendChild(heart);
+            }
+        }
+
+        createSparkles();
+        createHearts();
+
+        // --- 2. Navigation Logic ---
+        
+        function openMail() {
+            document.getElementById('screen-intro').classList.remove('active');
+            
+            // Show the flip card container
+            const card = document.getElementById('flip-card');
+            card.style.display = 'block';
+            
+            // Simple entry animation
+            card.animate([
+                { transform: 'scale(0) rotate(-10deg)', opacity: 0 },
+                { transform: 'scale(1) rotate(0deg)', opacity: 1 }
+            ], {
+                duration: 800,
+                easing: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+            });
+        }
+
+        function flipCard() {
+            document.getElementById('flip-card').classList.add('flipped');
+        }
+
+        function chooseOption(option) {
+            if (option === 1) {
+                // Success
+                document.getElementById('flip-card').style.display = 'none';
+                document.getElementById('screen-success').classList.add('active');
+                triggerConfetti(); // Optional visual flair function
+            } else if (option === 2) {
+                // Countdown Logic
+                const btnContainer = document.getElementById('options-container');
+                const msg = document.getElementById('countdown-msg');
+                const timerSpan = document.getElementById('timer');
+                
+                btnContainer.style.display = 'none';
+                msg.style.display = 'block';
+                let timeLeft = 3;
+                timerSpan.innerText = timeLeft;
+
+                const interval = setInterval(() => {
+                    timeLeft--;
+                    timerSpan.innerText = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearInterval(interval);
+                        msg.style.display = 'none';
+                        btnContainer.style.display = 'block';
+                    }
+                }, 1000);
+
+            } else if (option === 3) {
+                // Game Over
+                document.getElementById('flip-card').style.display = 'none';
+                document.getElementById('screen-gameover').classList.add('active');
+            }
+        }
+
+        function retryGame() {
+            document.getElementById('screen-gameover').classList.remove('active');
+            
+            // Reset the card
+            const card = document.getElementById('flip-card');
+            card.classList.remove('flipped'); // Reset to front side
+            
+            // Show card again
+            card.style.display = 'block';
+            
+            // Wait a moment then flip to back automatically or let user read again?
+            // Let's let them read again or just flip immediately. 
+            // To be smoother, let's just show the question side immediately.
+            setTimeout(() => {
+                card.classList.add('flipped');
+            }, 100);
+        }
+
+        // Optional: Simple Confetti for success
+        function triggerConfetti() {
+            // Just adds more aggressive sparkles/hearts for celebration
+            createHearts();
+            createHearts();
+        }
+
+    </script>
+</body>
+</html>
